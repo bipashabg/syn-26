@@ -14,7 +14,8 @@ from settings import TILE, COLORS
 class TileMap:
     TILE_SPRITES = {0: "floor.png", 1: "wall.png", 2: "cover.png"}
 
-    def __init__(self, path):
+    def __init__(self, path, tile_sprites=None):
+        self.tile_sprites = tile_sprites or self.TILE_SPRITES
         self.grid = []
         with open(path) as f:
             for row in csv.reader(f):
@@ -48,7 +49,7 @@ class TileMap:
         for y, row in enumerate(self.grid):
             for x, c in enumerate(row):
                 r = pygame.Rect(x * TILE, y * TILE, TILE, TILE)
-                img = assets.sprite(self.TILE_SPRITES.get(c), (TILE, TILE))
+                img = assets.sprite(self.tile_sprites.get(c), (TILE, TILE))
                 if img is not None:
                     surf.blit(img, cam.apply(r))
                 else:

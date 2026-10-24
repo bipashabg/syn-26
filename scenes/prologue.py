@@ -49,11 +49,21 @@ class PrologueScene(Scene):
         from scenes.loading import LoadingScene
         from scenes.stage1_static import make
 
+        transition_image = os.path.join(
+            ASSET_DIR,
+            "images",
+            "transitions",
+            "prologue_to_stage1_transition.jpg",
+        )
+
         self.game.replace_scene(
             LoadingScene(
                 self.game,
-                duration=3.0,
-                on_done=lambda: make(self.game)
+                duration=4.0,
+                on_done=lambda: make(self.game),
+                background_path=transition_image,
+                title="THE FORGOTTEN STATION",
+                subtitle="Entering Arin's reconstructed memories...",
             )
         )
 

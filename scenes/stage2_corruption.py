@@ -41,13 +41,41 @@ def make(game):
         )
 
     interactables = [
-        Interactable(400, 150, "Log", "log", [
-            {"speaker": "LOG 07", "text": "Override requires two keys. Only one was turned. Mine."},
-        ]),
-        Interactable(840, 230, "Fragment", "fragment"),
-        Interactable(560, 560, "Fragment", "fragment"),
-        Interactable(230, 560, "Fragment", "fragment"),
-        Interactable(980, 520, "Exit", "exit"),
+        Interactable(
+            400, 150, "Archive log", "log",
+            [
+                {
+                    "speaker": "ARCHIVE LOG 07",
+                    "text": "Override requires two keys. Only one was turned. Mine."
+                }
+            ],
+            sprite="stage2/tidal_log.png",
+            size=(44, 44),
+        ),
+
+        Interactable(
+            840, 230, "Memory fragment", "fragment",
+            sprite="stage2/tidal_fragment.png",
+            size=(36, 36),
+        ),
+
+        Interactable(
+            560, 560, "Memory fragment", "fragment",
+            sprite="stage2/tidal_fragment.png",
+            size=(36, 36),
+        ),
+
+        Interactable(
+            230, 560, "Memory fragment", "fragment",
+            sprite="stage2/tidal_fragment.png",
+            size=(36, 36),
+        ),
+
+        Interactable(
+            980, 520, "Archive exit", "exit",
+            sprite="stage2/tidal_exit.png",
+            size=(44, 48),
+        ),
     ]
 
     cfg = {
@@ -64,5 +92,12 @@ def make(game):
         "fragments_needed": 3,
         "reconstruction": _anomaly("stage2"),
         "next": go_next,
+        "tile_sprites": {
+            0: "stage2/tidal_floor.jpg",
+            1: "stage2/tidal_wall.jpg",
+            2: "stage2/tidal_cover.jpg",
+        },
+
+        "enemy_sprite": "stage2/tidal_watcher.png",
     }
     game.replace_scene(StageScene(game, cfg))

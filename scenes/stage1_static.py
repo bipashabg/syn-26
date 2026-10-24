@@ -1,10 +1,3 @@
-"""Stage 1 — "The Forgotten Station."
-
-A mental reconstruction of the Asterion. One corrupted-memory Watcher patrols.
-Reach the research terminal and HOLD E to investigate it — investigating takes
-a few seconds and makes noise that pulls the Watcher toward you. The clue:
-Arin overrode the safety system himself. Then the station's Tidal Archive opens.
-"""
 import os
 import json
 

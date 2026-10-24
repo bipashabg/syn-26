@@ -57,11 +57,40 @@ class Player(Entity):
 
     def draw(self, surf, cam):
         r = cam.apply(self.rect)
-        img = assets.sprite("player.png", (36, 36))
+
+        # Choose a sprite based on the direction the player faces.
+        if abs(self.facing.x) > abs(self.facing.y):
+            direction = "right" if self.facing.x > 0 else "left"
+        else:
+            direction = "down" if self.facing.y > 0 else "up"
+
+        # Load the matching directional image.
+        img = assets.sprite(
+            f"player_{direction}.png",
+            (36, 36),
+        )
+
+        # Use the original image if a directional sprite is missing.
+        if img is None:
+            img = assets.sprite("player.png", (36, 36))
+
         if img is not None:
             surf.blit(img, img.get_rect(center=r.center))
         else:
-            col = COLORS["player_crouch"] if self.crouching else COLORS["player"]
+            # Preserve the original fallback if no image exists.
+            col = (
+                COLORS["player_crouch"]
+                if self.crouching
+                else COLORS["player"]
+            )
+
             pygame.draw.rect(surf, col, r, border_radius=7)
+
             center = pygame.Vector2(r.center)
-            pygame.draw.line(surf, (255, 255, 255), center, center + self.facing * 18, 2)
+            pygame.draw.line(
+                surf,
+                (255, 255, 255),
+                center,
+                center + self.facing * 18,
+                2,
+            )
