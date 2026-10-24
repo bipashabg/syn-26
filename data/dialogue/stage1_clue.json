@@ -1,0 +1,8 @@
+[
+  {"speaker": "TERMINAL", "text": "SAFETY OVERRIDE: ACCEPTED"},
+  {"speaker": "TERMINAL", "text": "OPERATOR: ARIN RAO"},
+  {"speaker": "TERMINAL", "text": "FINAL LOG: CORRUPTED"},
+  {"speaker": "ARIN", "text": "Accepted by me. I turned it off myself. Why would I ever do that?"},
+  {"speaker": "VOICE", "text": "Don't trust the first thing you remember. There is more to this."},
+  {"speaker": "VOICE", "text": "The terminal just unlocked the Tidal Archive. Go."}
+]
