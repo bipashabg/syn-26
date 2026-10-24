@@ -20,8 +20,16 @@ class PrologueScene(Scene):
             self.game.push_scene(Dialogue.from_file(self.game, path, on_done=self._go))
 
     def _go(self):
+        from scenes.loading import LoadingScene
         from scenes.stage1_static import make
-        make(self.game)
+
+        self.game.replace_scene(
+            LoadingScene(
+                self.game,
+                duration=3.0,
+                on_done=lambda: make(self.game)
+            )
+        )
 
     def draw(self, surf):
         surf.fill(COLORS["bg"])

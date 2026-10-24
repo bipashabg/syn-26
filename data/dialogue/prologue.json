@@ -1,8 +1,92 @@
 [
-  {"speaker": "SYSTEM", "text": "Vesper Research Facility — Coma Ward. Day 2,557."},
-  {"speaker": "MNEME", "text": "Arin. Can you hear me? Your experiment is reactivating. If it completes, it takes the facility with it."},
-  {"speaker": "ARIN", "text": "...who... where am I? I can't remember anything."},
-  {"speaker": "MNEME", "text": "Seven years, gone. The shutdown procedure is still in your head — buried under everything you lost. We go in and we find it."},
-  {"speaker": "MNEME", "text": "Move with WASD. Hold Shift to crouch in cover. Press E to examine memories. Avoid the things that guard them."},
-  {"speaker": "MNEME", "text": "Diving now. Hold on to yourself in there."}
+  {
+    "image": "prologue/s_1.png",
+    "speaker": "DR. ARIN RAO",
+    "text": "The signal is stabilizing. Just a few more seconds, and we'll have everything."
+  },
+  {
+    "image": "prologue/s_1.png",
+    "speaker": "MIRA",
+    "text": "Keep an eye on the gravity shear, Arin. We're getting a lot of data, but let's not push it."
+  },
+  {
+    "image": "prologue/s_2.png",
+    "speaker": "MIRA",
+    "text": "Arin, the warning lights are up. The gravity shear is climbing!"
+  },
+  {
+    "image": "prologue/s_3_1.png",
+    "speaker": ".",
+    "text": "..."
+  },
+  {
+    "image": "prologue/s_3_2.png",
+    "speaker": "MIRA",
+    "text": "The Core is Destabalizing! Arin, we have to abort!"
+  },
+  {
+    "image": "prologue/s_3_3.png",
+    "speaker": "DR. ARIN RAO",
+    "text": "No! We need to finish the scan!"
+  },
+  {
+    "image": "prologue/s_3_4.png",
+    "speaker": ".",
+    "text": "..."
+  },
+  {
+    "image": "prologue/s_3_5.png",
+    "speaker": ".",
+    "text": "..."
+  },
+  {
+    "image": "prologue/s_4.png",
+    "speaker": "SYSTEM",
+    "text": "SEVEN YEARS LATER — VESPER RESEARCH FACILITY, COMA WARD."
+  },
+  {
+    "image": "prologue/s_5.png",
+    "speaker": "TECHNICIAN",
+    "text": "Seven years in a coma... and his memories are still deteriorating."
+  },
+  {
+    "image": "prologue/s_5.png",
+    "speaker": "DOCTOR",
+    "text": "His mind keeps returning to the same event. The Asterion incident."
+  },
+  {
+    "image": "prologue/s_5.png",
+    "speaker": "TECHNICIAN",
+    "text": "Doctor... the neural link is ready"
+  },
+  {
+    "image": "prologue/s_5.png",
+    "speaker": "DOCTOR",
+    "text": "Then it's time."
+  },
+  {
+    "image": "prologue/s_6.png",
+    "speaker": "DOCTOR",
+    "text": "You're going into Dr. Arin Rao's subconscious."
+  },
+  {
+    "image": "prologue/s_6.png",
+    "speaker": "DOCTOR",
+    "text": "Find the missing memories. Recover the shutdown sequence."
+  },
+  {
+    "image": "prologue/s_6.png",
+    "speaker": "DOCTOR",
+    "text": "And whatever you do... don't trust everything you see in there."
+  },
+  {
+    "image": "prologue/s_7.png",
+    "speaker": "TECHNICIAN",
+    "text": "Neural interface connected. Synchronization at forty percent."
+  },
+  {
+    "image": "prologue/s_7.png",
+    "speaker": "SYSTEM",
+    "text": "NEURAL LINK ESTABLISHED. ENTERING MEMORY CONSTRUCT."
+  }
 ]
