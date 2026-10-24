@@ -5,7 +5,14 @@ import pygame
 from engine.scene import Scene
 from engine import assets
 from gameplay.dialogue import Dialogue
-from settings import WIDTH, HEIGHT, COLORS, DATA_DIR
+from settings import ASSET_DIR, WIDTH, HEIGHT, COLORS, DATA_DIR
+
+# Prologue music configuration
+PROLOGUE_MUSIC = "1_no_time_for_caution.ogg"
+
+MUSIC_START = 153.0       # Start at 2:33 in the song
+MUSIC_VOLUME = 0.4         # Volume between 0.0 and 1.0
+PROLOGUE_DURATION = 42.0   # Cinematic duration after music starts
 
 
 class PrologueScene(Scene):
@@ -16,8 +23,27 @@ class PrologueScene(Scene):
     def on_enter(self):
         if not self._started:
             self._started = True
-            path = os.path.join(DATA_DIR, "dialogue", "prologue.json")
-            self.game.push_scene(Dialogue.from_file(self.game, path, on_done=self._go))
+
+            dialogue_path = os.path.join(
+                DATA_DIR, "dialogue", "prologue.json"
+            )
+
+            music_path = os.path.join(
+                ASSET_DIR, "audio", PROLOGUE_MUSIC
+            )
+
+            self.game.push_scene(
+                Dialogue.from_file(
+                    self.game,
+                    dialogue_path,
+                    on_done=self._go,
+                    timed=True,
+                    music_path=music_path,
+                    music_start=MUSIC_START,
+                    music_volume=MUSIC_VOLUME,
+                    fallback_duration=PROLOGUE_DURATION,
+                )
+            )
 
     def _go(self):
         from scenes.loading import LoadingScene

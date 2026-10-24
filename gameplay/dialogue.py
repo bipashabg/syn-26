@@ -5,6 +5,7 @@ Lines are a list of dicts: {"speaker": str, "text": str, "portrait": str?}.
 Your teammate writes these as JSON in data/dialogue/ — advance with Enter.
 """
 import json
+import os
 import pygame
 
 from engine.scene import Scene
@@ -15,25 +16,159 @@ from settings import WIDTH, HEIGHT, COLORS
 class Dialogue(Scene):
     transparent = True
 
-    def __init__(self, game, lines, on_done=None):
+    def __init__(self,
+    game,
+    lines,
+    on_done=None,
+    *,
+    timed=False,
+    music_path=None,
+    music_start=0.0,
+    music_volume=0.4,
+    fallback_duration=42.0,):
         super().__init__(game)
         self.lines = lines
         self.idx = 0
         self.on_done = on_done
+        
+        # Music and timeline settings
+        self.timed = timed
+        self.music_path = music_path
+        self.music_start = music_start
+        self.music_volume = music_volume
+        self.fallback_duration = fallback_duration
+
+        # Timing state
+        self.elapsed = 0.0
+        self.timeline_time = 0.0
+        self.music_active = False
+        self.finished = False
+        
         self._cinematic_backgrounds = {}
-
+        
     @classmethod
-    def from_file(cls, game, path, on_done=None):
-        with open(path) as f:
-            return cls(game, json.load(f), on_done)
+    def from_file(
+        cls,
+        game,
+        path,
+        on_done=None,
+        *,
+        timed=False,
+        music_path=None,
+        music_start=0.0,
+        music_volume=0.4,
+        fallback_duration=42.0,
+    ):
+        with open(path, encoding="utf-8") as f:
+            lines = json.load(f)
 
+        return cls(
+            game,
+            lines,
+            on_done,
+            timed=timed,
+            music_path=music_path,
+            music_start=music_start,
+            music_volume=music_volume,
+            fallback_duration=fallback_duration,
+        )
+    
+    def on_enter(self):
+        # Normal gameplay dialogue should not start music.
+        if not self.timed or not self.music_path:
+            return
+
+        try:
+            pygame.mixer.music.load(self.music_path)
+            pygame.mixer.music.set_volume(self.music_volume)
+
+            pygame.mixer.music.play(
+                loops=0,
+                start=self.music_start,
+                fade_ms=800,
+            )
+
+            self.music_active = True
+
+        except (pygame.error, OSError, NotImplementedError) as exc:
+            print("Could not play prologue music:", exc)
+            self.music_active = False
+
+    def on_exit(self):
+        # Stop the prologue soundtrack when leaving the cinematic.
+        if self.music_active:
+            pygame.mixer.music.stop()
+            self.music_active = False
+
+    def _finish(self):
+        # Prevent completing the same scene twice.
+        if self.finished:
+            return
+
+        self.finished = True
+        self.game.pop_scene()
+
+        if self.on_done:
+            self.on_done()
+
+    def update(self, dt):
+        if not self.timed or self.finished:
+            return
+
+        self.elapsed += dt
+
+        if self.music_active and pygame.mixer.music.get_busy():
+            pos_ms = pygame.mixer.music.get_pos()
+
+            if pos_ms >= 0:
+                self.timeline_time = pos_ms / 1000.0
+            else:
+                self.timeline_time = self.elapsed
+        else:
+            self.timeline_time = self.elapsed
+
+        # Select the most recent dialogue cue whose time has arrived.
+        for i, line in enumerate(self.lines):
+            cue_time = float(line.get("at", 0.0))
+
+            if cue_time <= self.timeline_time:
+                self.idx = i
+            else:
+                break
+
+        # Finish when the configured cinematic duration is reached.
+        if self.timeline_time >= self.fallback_duration:
+            self._finish()
+            return
+
+        # Also finish if the soundtrack ends naturally.
+        if (
+            self.music_active
+            and self.elapsed > 0.5
+            and not pygame.mixer.music.get_busy()
+        ):
+            self._finish()
+        
     def handle_event(self, e):
-        if e.type == pygame.KEYDOWN and e.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_e):
+        if e.type != pygame.KEYDOWN:
+            return
+
+        # Timed cinematics advance automatically.
+        if self.timed:
+            if e.key == pygame.K_ESCAPE:
+                self._finish()
+            return
+
+        # Normal gameplay dialogues remain manually controlled.
+        if e.key in (
+            pygame.K_RETURN,
+            pygame.K_SPACE,
+            pygame.K_e,
+        ):
             self.idx += 1
+
             if self.idx >= len(self.lines):
-                self.game.pop_scene()
-                if self.on_done:
-                    self.on_done()
+                self._finish()
 
     def draw(self, surf):
         if self.idx >= len(self.lines):
@@ -100,9 +235,14 @@ class Dialogue(Scene):
             assets.font(19)
         )
 
-        # Draw the input hint.
+        hint_text = (
+            "ESC: SKIP CINEMATIC"
+            if self.timed
+            else "Enter / Space ▸"
+        )
+
         hint = assets.font(14).render(
-            "Enter / Space ▸",
+            hint_text,
             True,
             COLORS["muted"]
         )
