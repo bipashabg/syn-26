@@ -1,16 +1,9 @@
-"""Stage 1 — "The Forgotten Station."
-
-A mental reconstruction of the Asterion. One corrupted-memory Watcher patrols.
-Reach the research terminal and HOLD E to investigate it — investigating takes
-a few seconds and makes noise that pulls the Watcher toward you. The clue:
-Arin overrode the safety system himself. Then the station's Tidal Archive opens.
-"""
 import os
 import json
 
 from scenes.stage_base import StageScene
 from gameplay.interactable import Interactable
-from settings import DATA_DIR
+from settings import ASSET_DIR, DATA_DIR
 
 
 def _dialogue(name):
@@ -21,7 +14,25 @@ def _dialogue(name):
 def make(game):
     def go_next(g):
         from scenes.stage2_corruption import make as make2
-        make2(g)
+        from scenes.loading import LoadingScene
+
+        transition_image = os.path.join(
+            ASSET_DIR,
+            "images",
+            "transitions",
+            "stage1_to_stage2_transition.jpg",
+        )
+
+        g.replace_scene(
+            LoadingScene(
+                g,
+                duration=4.0,
+                on_done=lambda: make2(g),
+                background_path=transition_image,
+                title="THE TIDAL ARCHIVE",
+                subtitle="Entering the next memory...",
+            )
+        )
 
     interactables = [
         Interactable(

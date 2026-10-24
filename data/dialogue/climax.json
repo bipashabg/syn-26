@@ -1,8 +1,34 @@
 [
-  {"speaker": "MNEME", "text": "Here it is. The shutdown sequence. Everything you came for."},
-  {"speaker": "ARIN", "text": "The voice. It's been you the whole time. You're not the system."},
-  {"speaker": "MNEME", "text": "I am what you made of her. You pulled Lena into the machine as the horizon closed — you couldn't let her go, so you broke every rule and kept a copy of her running."},
-  {"speaker": "MNEME", "text": "The instability threatening the facility is me. Degrading. To send the shutdown code is to erase the last of her."},
-  {"speaker": "ARIN", "text": "Then there was never a crew to save. Only this."},
-  {"speaker": "MNEME", "text": "Only this. The body in the ward emptied years ago, Arin. Even you are a trace in here now. Whatever you choose, it is the last thing either of us does."}
+  {
+    "speaker": "ARIN",
+    "text": "I remember now. I ignored the warning."
+  },
+  {
+    "speaker": "MIRA",
+    "text": "Arin! Abort! I'll get you out of here!"
+  },
+  {
+    "speaker": "ARIN",
+    "text": "The voice... Mira? You've been guiding me all this time?"
+  },
+  {
+    "speaker": "MIRA",
+    "text": "I'm the memory you buried. You couldn't face what happened when the Core collapsed."
+  },
+  {
+    "speaker": "ARIN",
+    "text": "You stayed behind to save me."
+  },
+  {
+    "speaker": "MIRA",
+    "text": "You remember now. Finish what we couldn't."
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": "SHUTDOWN SEQUENCE RECOVERED"
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": "1. Disable the signal resonator. 2. Vent the stored energy. 3. Isolate the core."
+  }
 ]

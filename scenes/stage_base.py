@@ -17,12 +17,18 @@ class StageScene(Scene):
     def __init__(self, game, config):
         super().__init__(game)
         self.cfg = config
-        self.map = TileMap(os.path.join(DATA_DIR, "rooms", config["room"]), config.get("tiles"))
+        self.map = TileMap(
+            os.path.join(DATA_DIR, "rooms", config["room"]),
+            config.get("tiles") or config.get("tile_sprites"),
+        )
         self.spawn = tuple(config["spawn"])
         self.player = Player(*self.spawn)
         self.cam = Camera(WIDTH, HEIGHT)
-        self.entities = [StealthEntity(wp, config.get("entity_speed", 70), sprite=config.get("enemy_sprite", "enemy.png"))
-                         for wp in config.get("patrols", [])]
+        self.entities = [
+            StealthEntity(wp, config.get("entity_speed", 70),
+                          sprite=config.get("enemy_sprite", "enemy.png"))
+            for wp in config.get("patrols", [])
+        ]
         self.interactables = list(config.get("interactables", []))
         self.fragments_needed = config.get("fragments_needed", 0)
         self.fragments_got = 0
