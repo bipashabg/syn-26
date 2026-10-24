@@ -38,9 +38,9 @@ def make(game):
         "spawn": (96, 96),
         "objective": "Reach the research terminal. Hold E to investigate — it makes noise.",
         "time": 600,
-        "entity_speed": 70,
+                "entity_speed": 55,
         "patrols": [
-            [(130, 360), (1020, 360)],   # the Watcher sweeps the central corridor
+            [(200, 140), (1000, 140), (1000, 640), (620, 640), (620, 300), (200, 300)],
         ],
         "interactables": interactables,
         "intro": "stage1.json",

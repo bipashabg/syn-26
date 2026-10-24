@@ -1,56 +1,67 @@
-"""Ending — the moral choice. T: transmit the truth (let go) / R: reset the loop.
-Both are cheap branches; wire a second visual here if time allows.
-"""
+
 import pygame
 
 from engine.scene import Scene
 from engine import assets
-from settings import WIDTH, HEIGHT, COLORS
+from engine.anim import SpaceBackdrop
+from settings import WIDTH, HEIGHT
+
+UI_FONT = "pixel.ttf"
+CYAN   = (95, 208, 255)
+ACCENT = (122, 92, 255)
+TEXT   = (230, 240, 255)
+MUTED  = (150, 160, 190)
+
+LINES = [
+    "The recovery team receives the shutdown procedure.",
+    "They apply it. The restart halts. The catastrophe is stopped.",
+    "Arin's brain activity steadies.",
+    "",
+    "As the neural link closes, one last voice:",
+]
+FINAL = "MIRA:  \"You can come back now, Arin.\""
 
 
 class EndingScene(Scene):
     def __init__(self, game):
         super().__init__(game)
-        self.choice = None
+        self.bg = SpaceBackdrop("space.gif")
+        self.t = 0.0
 
     def handle_event(self, e):
-        if e.type != pygame.KEYDOWN:
-            return
-        if self.choice is None:
-            if e.key == pygame.K_t:
-                self.choice = "transmit"
-            elif e.key == pygame.K_r:
-                self.choice = "reset"
-        else:
+        if e.type == pygame.KEYDOWN:
             if e.key in (pygame.K_RETURN, pygame.K_SPACE):
                 from scenes.title import TitleScene
                 self.game.replace_scene(TitleScene(self.game))
             elif e.key == pygame.K_ESCAPE:
                 self.game.quit()
 
+    def update(self, dt):
+        self.t += dt
+        self.bg.update(dt)
+
     def draw(self, surf):
-        surf.fill(COLORS["bg"])
+        self.bg.draw(surf)
+        veil = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        veil.fill((6, 8, 16, 150))          
+        surf.blit(veil, (0, 0))
+
         cx = WIDTH // 2
-        if self.choice is None:
-            q = assets.font(24).render("The shutdown code is in your hands.", True, COLORS["text"])
-            surf.blit(q, (cx - q.get_width() // 2, 170))
-            o1 = assets.font(20).render("[T]  Transmit the truth  —  finish it, and let her go", True, COLORS["accent"])
-            o2 = assets.font(20).render("[R]  Reset the loop  —  wake again, remember nothing", True, COLORS["muted"])
-            surf.blit(o1, (cx - o1.get_width() // 2, 300))
-            surf.blit(o2, (cx - o2.get_width() // 2, 350))
-        else:
-            if self.choice == "transmit":
-                lines = ["You send the code. The facility stabilises.",
-                         "MNEME goes quiet. The last of Lena with it.",
-                         "Seven years too late, you keep your promise."]
-            else:
-                lines = ["You let the loop close.",
-                         "The alarms begin again. A voice says: wake up, Arin.",
-                         "You remember nothing. You never do."]
-            y = 200
-            for ln in lines:
-                r = assets.font(20).render(ln, True, COLORS["text"])
-                surf.blit(r, (cx - r.get_width() // 2, y))
-                y += 40
-            hint = assets.font(15).render("Enter — return to title", True, COLORS["muted"])
-            surf.blit(hint, (cx - hint.get_width() // 2, y + 24))
+        title = assets.font(28, UI_FONT).render("BACK TO REALITY", True, CYAN)
+        surf.blit(title, (cx - title.get_width() // 2, 90))
+
+        reveal = int(self.t / 0.9)        
+        y = 190
+        for i, ln in enumerate(LINES):
+            if i > reveal:
+                break
+            img = assets.font(15, UI_FONT).render(ln, True, TEXT)
+            surf.blit(img, (cx - img.get_width() // 2, y))
+            y += 32
+
+        if reveal >= len(LINES):
+            fimg = assets.font(17, UI_FONT).render(FINAL, True, ACCENT)
+            surf.blit(fimg, (cx - fimg.get_width() // 2, y + 20))
+            if reveal >= len(LINES) + 1:
+                hint = assets.font(12, UI_FONT).render("Enter ▸ title", True, MUTED)
+                surf.blit(hint, (cx - hint.get_width() // 2, y + 80))

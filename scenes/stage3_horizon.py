@@ -1,78 +1,92 @@
-"""Stage 3 — "Event Horizon" (climax). Recover the shutdown procedure at the
-center, then the revelation and the choice.
-
-This subclasses StageScene to add the gravity-well feel: the deeper you go
-toward the center, the more real time your dive costs (clock.mind_cost rises).
-Swap in a movement drag here too if you have time.
-"""
 import os
 import json
-import pygame
 
 from scenes.stage_base import StageScene
 from gameplay.interactable import Interactable
 from gameplay.dialogue import Dialogue
-from settings import DATA_DIR, WIDTH, HEIGHT
+from gameplay.reconstruction import Reconstruction
+from gameplay.hazard import MemoryTide
+from settings import DATA_DIR
 
 
-class HorizonStage(StageScene):
-    def __init__(self, game, config):
-        super().__init__(game, config)
-        self.center = pygame.Vector2(self.map.pixel_w / 2, self.map.pixel_h / 2)
+def _dialogue(name):
+    with open(os.path.join(DATA_DIR, "dialogue", name), encoding="utf-8-sig") as f:
+        return json.load(f)
+
+
+SHUTDOWN = {
+    "fragments": [
+        "Disable the signal resonator",
+        "Vent the stored energy",
+        "Isolate the core",
+    ],
+    "correct": [0, 1, 2],
+    "true_memory": [
+        {"speaker": "SYSTEM", "text": "Shutdown sequence accepted. Resonance collapsing."},
+        {"speaker": "MIRA", "text": "That's it, Arin. You remembered. You can come back now."},
+    ],
+    "false_memory": [
+        {"speaker": "SYSTEM", "text": "Sequence rejected. Instability rising."},
+        {"speaker": "MIRA", "text": "No — think. Resonator, then energy, then core. In that order."},
+    ],
+}
+
+
+class CoreMemoryStage(StageScene):
+    def __init__(self, game, cfg):
+        super().__init__(game, cfg)
+        # safe zones = the cover tiles already in the room
+        self.tide = MemoryTide(interval=11.0, warn=3.0, duration=4.0,
+                               safe_zones=self.map.cover)
 
     def update(self, dt):
-        # the closer to the well, the faster facility-time burns
-        d = pygame.Vector2(self.player.rect.center).distance_to(self.center)
-        self.clock.mind_cost = 1.0 + max(0.0, (300 - d) / 100.0)
         super().update(dt)
+        self.tide.update(dt)
+        if self.tide.hitting(self.player):   # caught in the open during a wave
+            self._caught()
 
-    def _finish(self):
-        # climax cutscene -> ending, instead of a plain next-stage jump
-        with open(os.path.join(DATA_DIR, "dialogue", "climax.json")) as f:
-            lines = json.load(f)
+    def draw(self, surf):
+        super().draw(surf)
+        self.tide.draw(surf, self.cam)
 
-        def to_ending():
-            from scenes.ending import EndingScene
-            self.game.replace_scene(EndingScene(self.game))
+    def _complete_terminal(self, t):
+        """Core console done -> play the recording, then the shutdown puzzle."""
+        self.game.push_scene(Dialogue(self.game, t.payload or [], on_done=self._start_puzzle))
 
-        self.game.push_scene(Dialogue(self.game, lines, on_done=to_ending))
+    def _start_puzzle(self):
+        self.game.push_scene(Reconstruction(
+            self.game, SHUTDOWN["fragments"], SHUTDOWN["correct"],
+            on_true=lambda: self.game.push_scene(
+                Dialogue(self.game, SHUTDOWN["true_memory"], on_done=self._to_ending)),
+            on_false=lambda: self.game.push_scene(
+                Dialogue(self.game, SHUTDOWN["false_memory"], on_done=self._start_puzzle)),
+        ))
+
+    def _to_ending(self):
+        from scenes.ending import EndingScene
+        self.game.replace_scene(EndingScene(self.game))
 
 
 def make(game):
-    interactables = [
-        Interactable(360, 260, "Fragment", "fragment"),
-        Interactable(760, 260, "Fragment", "fragment"),
-        Interactable(560, 480, "Fragment", "fragment"),
-        Interactable(560, 360, "Shutdown procedure", "exit"),    # center of the well
-    ]
-
+    console = Interactable(
+        554, 362, "Core console", "terminal",      
+        payload=_dialogue("stage3_recording.json"),
+        sprite="terminal.png", size=(44, 44),
+        investigate_time=3.5,
+    )
     cfg = {
         "room": "stage3.csv",
+        "tiles": {0: "floor3.png", 1: "wall3.png", 2: "cover3.png"},
+        "enemy_sprite": "enemy3.png",
         "spawn": (96, 96),
-        "objective": "Reach the core. Recover the shutdown procedure.",
+        "objective": "Reach the core console. Time the Tide and the guardian.",
         "time": 480,
-        "entity_speed": 95,
+        "entity_speed": 55,
         "patrols": [
-            [(470, 200), (470, 500)],
+            [(240, 180), (912, 180), (912, 600), (240, 600)],   # slow loop around the chamber
         ],
-        "interactables": interactables,
-        "fragments_needed": 2,
-        "reconstruction": {
-            "fragments": [
-                "Voss, dying, as the horizon collapsed",
-                "Your hand on the override",
-                "A consciousness pulled into the system",
-                "The voice that has guided you since",
-            ],
-            "correct": [0, 1, 2, 3],
-            "true_memory": [
-                {"speaker": "MEMORY", "text": "You broke the protocol to pull her in. To keep something of Lena alive inside the machine."},
-                {"speaker": "MNEME", "text": "...you remember me now."},
-            ],
-            "false_memory": [
-                {"speaker": "MEMORY", "text": "You broke the protocol for the data. For the discovery."},
-                {"speaker": "MNEME", "text": "No. You never cared about the data. Order it again."},
-            ],
-        },
+        "interactables": [console],
+        "intro": "stage3.json",
+        "music": "stage3_music.ogg",
     }
-    game.replace_scene(HorizonStage(game, cfg))
+    game.replace_scene(CoreMemoryStage(game, cfg))

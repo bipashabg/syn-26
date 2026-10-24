@@ -6,7 +6,7 @@ from engine import assets, audio
 from settings import WIDTH, HEIGHT
 
 UI_FONT = "pixel.ttf"
-CHARS_PER_SEC = 45          # typewriter speed
+CHARS_PER_SEC = 45         
 TYPE_SOUND = "type.wav"
 
 PANEL  = (13, 16, 34)

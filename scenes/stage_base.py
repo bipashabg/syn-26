@@ -17,11 +17,11 @@ class StageScene(Scene):
     def __init__(self, game, config):
         super().__init__(game)
         self.cfg = config
-        self.map = TileMap(os.path.join(DATA_DIR, "rooms", config["room"]))
+        self.map = TileMap(os.path.join(DATA_DIR, "rooms", config["room"]), config.get("tiles"))
         self.spawn = tuple(config["spawn"])
         self.player = Player(*self.spawn)
         self.cam = Camera(WIDTH, HEIGHT)
-        self.entities = [StealthEntity(wp, config.get("entity_speed", 70))
+        self.entities = [StealthEntity(wp, config.get("entity_speed", 70), sprite=config.get("enemy_sprite", "enemy.png"))
                          for wp in config.get("patrols", [])]
         self.interactables = list(config.get("interactables", []))
         self.fragments_needed = config.get("fragments_needed", 0)
@@ -39,7 +39,6 @@ class StageScene(Scene):
             path = os.path.join(DATA_DIR, "dialogue", self.cfg["intro"])
             self.game.push_scene(Dialogue.from_file(self.game, path))
 
-    # ---------- interaction ----------
     def handle_event(self, e):
         if (e.type == pygame.KEYDOWN and e.key == pygame.K_e
                 and self._near and self._near.kind in ("log", "fragment", "exit")):
@@ -123,7 +122,7 @@ class StageScene(Scene):
         else:
             for it in self.interactables:
                 if it.kind == "terminal" and not it.used and it.progress > 0:
-                    it.progress = max(0.0, it.progress - 0.25 * dt)
+                    it.progress = max(0.0, it.progress - 0.05 * dt)
 
         seen = any(en.can_see(self.player, self.map) for en in self.entities)
         self.detection += (DETECT_RATE if seen else -DETECT_DECAY) * dt
