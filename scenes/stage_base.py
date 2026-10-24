@@ -1,24 +1,3 @@
-"""StageScene — the reusable playable stage. Each stage file hands it a config
-dict; this class runs the loop (explore, stealth, investigate/collect, exit).
-
-config keys:
-  room             CSV filename in data/rooms/
-  spawn            (x, y) player start, pixels
-  objective        str shown in the HUD
-  time             countdown seconds (default 600)
-  entity_speed     patrol speed (default 70)
-  patrols          list of waypoint-lists, one per entity
-  interactables    list of Interactable objects
-  intro            dialogue JSON filename to play on entry (optional)
-  next             callable(game) to advance to the next stage (optional)
-  fragments_needed int; reconstruction triggers once collected (default 0)
-  reconstruction   dict: {fragments, correct, true_memory, false_memory}
-
-Terminal interactables (kind="terminal") are HELD with E to investigate: a
-progress bar fills over the terminal's investigate_time, and while it fills the
-noise lures every enemy toward it. On completion the clue (payload) plays, then
-`next` fires.
-"""
 import os
 import pygame
 
@@ -117,7 +96,6 @@ class StageScene(Scene):
                 self._near = it
                 break
 
-    # ---------- loop ----------
     def update(self, dt):
         self.player.update(dt, self.map)
         self.clock.update(dt)
@@ -128,9 +106,11 @@ class StageScene(Scene):
                               and not self._near.used) else None
         investigating = bool(term and keys[pygame.K_e])
 
+        NOISE_RADIUS = 220
+
         for en in self.entities:
-            if investigating:
-                en.lure_toward(term.rect.center, dt)   # noise draws them in
+            if investigating and pygame.Vector2(en.rect.center).distance_to(term.rect.center) < NOISE_RADIUS:
+                en.lure_toward(term.rect.center, dt)
             else:
                 en.update(dt, self.map)
 
@@ -143,7 +123,7 @@ class StageScene(Scene):
         else:
             for it in self.interactables:
                 if it.kind == "terminal" and not it.used and it.progress > 0:
-                    it.progress = max(0.0, it.progress - 0.5 * dt)
+                    it.progress = max(0.0, it.progress - 0.25 * dt)
 
         seen = any(en.can_see(self.player, self.map) for en in self.entities)
         self.detection += (DETECT_RATE if seen else -DETECT_DECAY) * dt
