@@ -1,298 +1,209 @@
-"""Dialogue / cutscene overlay. The single most important content system —
-a story game lives or dies on it. Transparent, so the room shows behind it.
-
-Lines are a list of dicts: {"speaker": str, "text": str, "portrait": str?}.
-Your teammate writes these as JSON in data/dialogue/ — advance with Enter.
-"""
 import json
-import os
 import pygame
 
 from engine.scene import Scene
-from engine import assets
-from settings import WIDTH, HEIGHT, COLORS
+from engine import assets, audio
+from settings import WIDTH, HEIGHT
+
+UI_FONT = "pixel.ttf"
+CHARS_PER_SEC = 45          # typewriter speed
+TYPE_SOUND = "type.wav"
+
+PANEL  = (13, 16, 34)
+FRAME  = (95, 208, 255)
+INNER  = (43, 108, 230)
+ACCENT = (122, 92, 255)
+TEXT   = (230, 240, 255)
+MUTED  = (120, 140, 190)
 
 
 class Dialogue(Scene):
     transparent = True
 
-    def __init__(self,
-    game,
-    lines,
-    on_done=None,
-    *,
-    timed=False,
-    music_path=None,
-    music_start=0.0,
-    music_volume=0.4,
-    fallback_duration=42.0,):
+    def __init__(self, game, lines, on_done=None, *,
+                 timed=False, music_path=None, music_start=0.0,
+                 music_volume=0.4, fallback_duration=42.0):
         super().__init__(game)
         self.lines = lines
         self.idx = 0
         self.on_done = on_done
-        
-        # Music and timeline settings
+
+        # cinematic / timed-mode settings
         self.timed = timed
         self.music_path = music_path
         self.music_start = music_start
         self.music_volume = music_volume
         self.fallback_duration = fallback_duration
 
-        # Timing state
+        # typewriter state (normal mode)
+        self.shown = 0.0
+        self._played = 0
+
+        # timing / lifecycle state
         self.elapsed = 0.0
         self.timeline_time = 0.0
         self.music_active = False
         self.finished = False
-        
         self._cinematic_backgrounds = {}
-        
-    @classmethod
-    def from_file(
-        cls,
-        game,
-        path,
-        on_done=None,
-        *,
-        timed=False,
-        music_path=None,
-        music_start=0.0,
-        music_volume=0.4,
-        fallback_duration=42.0,
-    ):
-        with open(path, encoding="utf-8") as f:
-            lines = json.load(f)
 
-        return cls(
-            game,
-            lines,
-            on_done,
-            timed=timed,
-            music_path=music_path,
-            music_start=music_start,
-            music_volume=music_volume,
-            fallback_duration=fallback_duration,
-        )
-    
+    @classmethod
+    def from_file(cls, game, path, on_done=None, *,
+                  timed=False, music_path=None, music_start=0.0,
+                  music_volume=0.4, fallback_duration=42.0):
+        with open(path, encoding="utf-8-sig") as f:   # utf-8-sig swallows Windows BOMs
+            lines = json.load(f)
+        return cls(game, lines, on_done, timed=timed, music_path=music_path,
+                   music_start=music_start, music_volume=music_volume,
+                   fallback_duration=fallback_duration)
+
     def on_enter(self):
-        # Normal gameplay dialogue should not start music.
+        # Only timed cinematics drive their own soundtrack.
         if not self.timed or not self.music_path:
             return
-
         try:
             pygame.mixer.music.load(self.music_path)
             pygame.mixer.music.set_volume(self.music_volume)
-
-            pygame.mixer.music.play(
-                loops=0,
-                start=self.music_start,
-                fade_ms=800,
-            )
-
+            pygame.mixer.music.play(loops=0, start=self.music_start, fade_ms=800)
             self.music_active = True
-
         except (pygame.error, OSError, NotImplementedError) as exc:
-            print("Could not play prologue music:", exc)
+            print("Could not play cinematic music:", exc)
             self.music_active = False
 
     def on_exit(self):
-        # Stop the prologue soundtrack when leaving the cinematic.
         if self.music_active:
-            pygame.mixer.music.stop()
+            try:
+                pygame.mixer.music.stop()
+            except pygame.error:
+                pass
             self.music_active = False
 
     def _finish(self):
-        # Prevent completing the same scene twice.
         if self.finished:
             return
-
         self.finished = True
         self.game.pop_scene()
-
         if self.on_done:
             self.on_done()
 
+    def _text(self):
+        if self.idx < len(self.lines):
+            return self.lines[self.idx].get("text", "")
+        return ""
+
     def update(self, dt):
-        if not self.timed or self.finished:
+        if self.timed:
+            self._update_timed(dt)
+        else:
+            self._update_typewriter(dt)
+
+    def _update_typewriter(self, dt):
+        text = self._text()
+        if self.shown < len(text):
+            self.shown = min(len(text), self.shown + CHARS_PER_SEC * dt)
+            n = int(self.shown)
+            if n > self._played:
+                ch = text[n - 1] if 0 < n <= len(text) else " "
+                if ch != " " and n % 2 == 0:
+                    audio.play(TYPE_SOUND, 0.5)
+                self._played = n
+
+    def _update_timed(self, dt):
+        if self.finished:
             return
-
         self.elapsed += dt
-
         if self.music_active and pygame.mixer.music.get_busy():
             pos_ms = pygame.mixer.music.get_pos()
-
-            if pos_ms >= 0:
-                self.timeline_time = pos_ms / 1000.0
-            else:
-                self.timeline_time = self.elapsed
+            self.timeline_time = pos_ms / 1000.0 if pos_ms >= 0 else self.elapsed
         else:
             self.timeline_time = self.elapsed
 
-        # Select the most recent dialogue cue whose time has arrived.
+        # pick the latest cue whose time has arrived
         for i, line in enumerate(self.lines):
-            cue_time = float(line.get("at", 0.0))
-
-            if cue_time <= self.timeline_time:
+            if float(line.get("at", 0.0)) <= self.timeline_time:
                 self.idx = i
             else:
                 break
 
-        # Finish when the configured cinematic duration is reached.
         if self.timeline_time >= self.fallback_duration:
             self._finish()
             return
-
-        # Also finish if the soundtrack ends naturally.
-        if (
-            self.music_active
-            and self.elapsed > 0.5
-            and not pygame.mixer.music.get_busy()
-        ):
+        if self.music_active and self.elapsed > 0.5 and not pygame.mixer.music.get_busy():
             self._finish()
-        
+
     def handle_event(self, e):
         if e.type != pygame.KEYDOWN:
             return
-
-        # Timed cinematics advance automatically.
         if self.timed:
             if e.key == pygame.K_ESCAPE:
                 self._finish()
             return
-
-        # Normal gameplay dialogues remain manually controlled.
-        if e.key in (
-            pygame.K_RETURN,
-            pygame.K_SPACE,
-            pygame.K_e,
-        ):
-            self.idx += 1
-
-            if self.idx >= len(self.lines):
-                self._finish()
+        if e.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_e):
+            text = self._text()
+            if self.shown < len(text):
+                self.shown = len(text)          # first press: reveal the rest
+            else:
+                self.idx += 1                   # next press: advance
+                self.shown = 0.0
+                self._played = 0
+                if self.idx >= len(self.lines):
+                    self._finish()
 
     def draw(self, surf):
         if self.idx >= len(self.lines):
             return
-
         line = self.lines[self.idx]
-
-        # Does this dialogue entry have a cinematic image?
+        full = line.get("text", "")
+        shown_text = full if self.timed else full[:int(self.shown)]
         image_path = line.get("image")
 
         if image_path:
-            # Draw the full-screen background first.
             self._draw_cinematic_background(surf, image_path)
-
-            # Position the caption panel near the bottom.
-            box = pygame.Rect(
-                24,
-                HEIGHT - 132,
-                WIDTH - 48,
-                108
-            )
-
-            # Create a translucent black background.
+            box = pygame.Rect(24, HEIGHT - 132, WIDTH - 48, 108)
             panel = pygame.Surface(box.size, pygame.SRCALPHA)
             panel.fill((10, 12, 18, 224))
             surf.blit(panel, box.topleft)
-
+            pygame.draw.rect(surf, FRAME, box, 2)
         else:
-            # Keep the original appearance for normal dialogue.
-            box = pygame.Rect(
-                40,
-                HEIGHT - 170,
-                WIDTH - 80,
-                130
-            )
+            box = pygame.Rect(30, HEIGHT - 150, WIDTH - 60, 120)
+            pygame.draw.rect(surf, PANEL, box)
+            pygame.draw.rect(surf, FRAME, box, 3)
+            pygame.draw.rect(surf, INNER, box.inflate(-10, -10), 1)
+            for cx, cy in ((box.left, box.top), (box.right - 6, box.top),
+                           (box.left, box.bottom - 6), (box.right - 6, box.bottom - 6)):
+                pygame.draw.rect(surf, ACCENT, pygame.Rect(cx, cy, 6, 6))
 
-            pygame.draw.rect(
-                surf, COLORS["box"], box,
-                border_radius=10
-            )
+        surf.blit(assets.font(18, UI_FONT).render(line.get("speaker", ""), True, ACCENT),
+                  (box.x + 18, box.y + 14))
+        self._wrapped(surf, shown_text, box.x + 18, box.y + 46,
+                      box.width - 36, assets.font(15, UI_FONT))
 
-        # Draw the panel border.
-        pygame.draw.rect(
-            surf, COLORS["box_border"], box,
-            2, border_radius=10
-        )
-
-        # Draw the speaker's name.
-        speaker = assets.font(20).render(
-            line.get("speaker", ""),
-            True,
-            COLORS["accent"]
-        )
-
-        surf.blit(speaker, (box.x + 18, box.y + 12))
-
-        # Draw the dialogue text, with automatic line wrapping.
-        self._wrapped(
-            surf,
-            line.get("text", ""),
-            box.x + 18,
-            box.y + 43,
-            box.width - 36,
-            assets.font(19)
-        )
-
-        hint_text = (
-            "ESC: SKIP CINEMATIC"
-            if self.timed
-            else "Enter / Space ▸"
-        )
-
-        hint = assets.font(14).render(
-            hint_text,
-            True,
-            COLORS["muted"]
-        )
-
-        surf.blit(
-            hint,
-            (box.right - hint.get_width() - 14, box.bottom - 22)
-        )
+        if self.timed:
+            hint = assets.font(12, UI_FONT).render("Esc ▸ skip", True, MUTED)
+            surf.blit(hint, (box.right - hint.get_width() - 16, box.bottom - 24))
+        elif self.shown >= len(full):
+            hint = assets.font(12, UI_FONT).render("Enter ▸", True, MUTED)
+            surf.blit(hint, (box.right - hint.get_width() - 16, box.bottom - 24))
 
     def _wrapped(self, surf, text, x, y, w, font):
         line, yy = "", y
         for word in text.split():
             test = (line + " " + word).strip()
             if font.size(test)[0] > w and line:
-                surf.blit(font.render(line, True, COLORS["text"]), (x, yy))
-                yy += 26
+                surf.blit(font.render(line, True, TEXT), (x, yy))
+                yy += font.get_height() + 6
                 line = word
             else:
                 line = test
         if line:
-            surf.blit(font.render(line, True, COLORS["text"]), (x, yy))
+            surf.blit(font.render(line, True, TEXT), (x, yy))
 
     def _draw_cinematic_background(self, surf, image_path):
         if image_path not in self._cinematic_backgrounds:
             source = assets.image(image_path)
-
-            source_w, source_h = source.get_size()
-
-            # Scale the image enough to cover the entire window.
-            scale = max(
-                WIDTH / source_w,
-                HEIGHT / source_h
-            )
-
-            target_size = (
-                round(source_w * scale),
-                round(source_h * scale)
-            )
-
-            background = pygame.transform.smoothscale(
-                source, target_size
-            )
-
-            self._cinematic_backgrounds[image_path] = background
-
-        background = self._cinematic_backgrounds[image_path]
-
-        # Center the image. Any excess edges are cropped by the window.
-        destination = background.get_rect(
-            center=(WIDTH // 2, HEIGHT // 2)
-        )
-
-        surf.blit(background, destination)
+            sw, sh = source.get_size()
+            scale = max(WIDTH / sw, HEIGHT / sh)
+            scaled = pygame.transform.smoothscale(
+                source, (round(sw * scale), round(sh * scale)))
+            self._cinematic_backgrounds[image_path] = scaled
+        bg = self._cinematic_backgrounds[image_path]
+        surf.blit(bg, bg.get_rect(center=(WIDTH // 2, HEIGHT // 2)))

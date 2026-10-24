@@ -1,9 +1,12 @@
-"""Ren — the player. Top-down movement with axis-separated wall collision,
-plus a crouch that slows you and lets cover tiles hide you from entities.
+"""Ren / Arin — the player. Top-down movement with axis-separated wall
+collision, plus a crouch that slows you and lets cover tiles hide you.
+
+Draws assets/images/player.png centred on the hitbox if present, else a block.
 """
 import pygame
 
 from engine.entity import Entity
+from engine import assets
 from settings import COLORS, PLAYER_SPEED, PLAYER_CROUCH_SPEED
 
 
@@ -54,7 +57,11 @@ class Player(Entity):
 
     def draw(self, surf, cam):
         r = cam.apply(self.rect)
-        col = COLORS["player_crouch"] if self.crouching else COLORS["player"]
-        pygame.draw.rect(surf, col, r, border_radius=7)
-        center = pygame.Vector2(r.center)
-        pygame.draw.line(surf, (255, 255, 255), center, center + self.facing * 18, 2)
+        img = assets.sprite("player.png", (36, 36))
+        if img is not None:
+            surf.blit(img, img.get_rect(center=r.center))
+        else:
+            col = COLORS["player_crouch"] if self.crouching else COLORS["player"]
+            pygame.draw.rect(surf, col, r, border_radius=7)
+            center = pygame.Vector2(r.center)
+            pygame.draw.line(surf, (255, 255, 255), center, center + self.facing * 18, 2)
