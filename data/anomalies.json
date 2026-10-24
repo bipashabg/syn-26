@@ -1,0 +1,19 @@
+{
+  "stage2": {
+    "fragments": [
+      "Arin at the override panel",
+      "Lena Voss, arguing, afraid",
+      "The safety lockout, cleared by one key",
+      "The signal spiking as the field opened"
+    ],
+    "correct": [0, 1, 2, 3],
+    "true_memory": [
+      {"speaker": "MEMORY", "text": "Voss begged you to stop. You turned the override anyway. Not for the signal — for her."},
+      {"speaker": "MNEME", "text": "You are close to the truth now. It will not be kind."}
+    ],
+    "false_memory": [
+      {"speaker": "MEMORY", "text": "The lockout failed on its own. No one was to blame."},
+      {"speaker": "MNEME", "text": "Comforting. False. Order the fragments again."}
+    ]
+  }
+}
