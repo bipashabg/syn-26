@@ -9,7 +9,7 @@ import json
 
 from scenes.stage_base import StageScene
 from gameplay.interactable import Interactable
-from settings import DATA_DIR
+from settings import ASSET_DIR, DATA_DIR
 
 
 def _anomaly(key):
@@ -20,7 +20,25 @@ def _anomaly(key):
 def make(game):
     def go_next(g):
         from scenes.stage3_horizon import make as make3
-        make3(g)
+        from scenes.loading import LoadingScene
+
+        transition_image = os.path.join(
+            ASSET_DIR,
+            "images",
+            "transitions",
+            "stage2_to_stage3_transition.jpg",
+        )
+
+        g.replace_scene(
+            LoadingScene(
+                g,
+                duration=4.0,
+                on_done=lambda: make3(g),
+                background_path=transition_image,
+                title="THE CORE MEMORY",
+                subtitle="Reconstructing the final memory...",
+            )
+        )
 
     interactables = [
         Interactable(400, 150, "Log", "log", [
