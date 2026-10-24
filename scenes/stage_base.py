@@ -1,5 +1,5 @@
 """StageScene — the reusable playable stage. Each stage file hands it a config
-dict; this class runs the loop (explore, stealth, collect, reconstruct, exit).
+dict; this class runs the loop (explore, stealth, investigate/collect, exit).
 
 config keys:
   room             CSV filename in data/rooms/
@@ -9,10 +9,15 @@ config keys:
   entity_speed     patrol speed (default 70)
   patrols          list of waypoint-lists, one per entity
   interactables    list of Interactable objects
-  fragments_needed int; reconstruction triggers once collected (default 0)
-  reconstruction   dict: {fragments, correct, true_memory, false_memory}
   intro            dialogue JSON filename to play on entry (optional)
   next             callable(game) to advance to the next stage (optional)
+  fragments_needed int; reconstruction triggers once collected (default 0)
+  reconstruction   dict: {fragments, correct, true_memory, false_memory}
+
+Terminal interactables (kind="terminal") are HELD with E to investigate: a
+progress bar fills over the terminal's investigate_time, and while it fills the
+noise lures every enemy toward it. On completion the clue (payload) plays, then
+`next` fires.
 """
 import os
 import pygame
@@ -55,9 +60,10 @@ class StageScene(Scene):
             path = os.path.join(DATA_DIR, "dialogue", self.cfg["intro"])
             self.game.push_scene(Dialogue.from_file(self.game, path))
 
-    # ---- interaction ----
+    # ---------- interaction ----------
     def handle_event(self, e):
-        if e.type == pygame.KEYDOWN and e.key == pygame.K_e and self._near:
+        if (e.type == pygame.KEYDOWN and e.key == pygame.K_e
+                and self._near and self._near.kind in ("log", "fragment", "exit")):
             self._interact(self._near)
 
     def _interact(self, it):
@@ -86,6 +92,15 @@ class StageScene(Scene):
             on_false=lambda: self.game.push_scene(Dialogue(self.game, rc["false_memory"])),
         ))
 
+    def _complete_terminal(self, t):
+        nxt = self.cfg.get("next")
+
+        def after():
+            if nxt:
+                nxt(self.game)
+
+        self.game.push_scene(Dialogue(self.game, t.payload or [], on_done=after))
+
     def _finish(self):
         nxt = self.cfg.get("next")
         if nxt:
@@ -93,28 +108,50 @@ class StageScene(Scene):
 
     def _caught(self):
         self.detection = 0.0
-        self.player.pos.update(*self.spawn)  # respawn at stage start (simple checkpoint)
+        self.player.pos.update(*self.spawn)
 
-    # ---- loop ----
-    def update(self, dt):
-        self.player.update(dt, self.map)
-        self.clock.update(dt)
-
-        seen = False
-        for en in self.entities:
-            en.update(dt, self.map)
-            if en.can_see(self.player, self.map):
-                seen = True
-        self.detection += (DETECT_RATE if seen else -DETECT_DECAY) * dt
-        self.detection = max(0.0, min(1.0, self.detection))
-        if self.detection >= 1.0:
-            self._caught()
-
+    def _update_near(self):
         self._near = None
         for it in self.interactables:
             if not it.used and self.player.rect.colliderect(it.rect.inflate(26, 26)):
                 self._near = it
                 break
+
+    # ---------- loop ----------
+    def update(self, dt):
+        self.player.update(dt, self.map)
+        self.clock.update(dt)
+        self._update_near()
+
+        keys = pygame.key.get_pressed()
+        term = self._near if (self._near and self._near.kind == "terminal"
+                              and not self._near.used) else None
+        investigating = bool(term and keys[pygame.K_e])
+
+        for en in self.entities:
+            if investigating:
+                en.lure_toward(term.rect.center, dt)   # noise draws them in
+            else:
+                en.update(dt, self.map)
+
+        if investigating:
+            term.progress += dt / term.investigate_time
+            if term.progress >= 1.0:
+                term.progress = 1.0
+                term.used = True
+                self._complete_terminal(term)
+        else:
+            for it in self.interactables:
+                if it.kind == "terminal" and not it.used and it.progress > 0:
+                    it.progress = max(0.0, it.progress - 0.5 * dt)
+
+        seen = any(en.can_see(self.player, self.map) for en in self.entities)
+        self.detection += (DETECT_RATE if seen else -DETECT_DECAY) * dt
+        if investigating:
+            self.detection += 0.15 * dt   # investigating is noisy
+        self.detection = max(0.0, min(1.0, self.detection))
+        if self.detection >= 1.0:
+            self._caught()
 
         self.cam.follow(self.player.rect, self.map.pixel_w, self.map.pixel_h)
 

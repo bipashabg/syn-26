@@ -1,20 +1,23 @@
-"""StealthEntity — a patrolling "memory guardian".
+"""StealthEntity — a patrolling corrupted memory ("Watcher").
 
-This is the meatiest system in the game: a patrol path, a facing vector, a
-vision cone (range + angle), and a line-of-sight raycast against walls. If the
-player is inside the cone AND there's a clear line AND they aren't crouched in
-cover, the entity sees them. `can_see()` is what the stage uses to fill the
-detection meter.
+Patrol path + facing + a vision cone (range/angle) + a line-of-sight raycast.
+`can_see()` is what the stage uses to fill the detection meter. `lure_toward()`
+pulls it off patrol toward a noise source (e.g. the terminal being investigated).
+
+Draws `assets.sprite("enemy.png")` centred on its hitbox if present, else a
+red block. The vision cone is always drawn — it's essential gameplay feedback.
 """
 import math
 import pygame
 
 from engine.entity import Entity
+from engine import assets
 from settings import COLORS, VISION_RANGE, VISION_ANGLE
 
 
 class StealthEntity(Entity):
-    def __init__(self, waypoints, speed=70, vision_range=VISION_RANGE):
+    def __init__(self, waypoints, speed=70, vision_range=VISION_RANGE,
+                 sprite="enemy.png"):
         pts = [pygame.Vector2(p) for p in waypoints]
         super().__init__(pts[0].x, pts[0].y, 30, 30)
         self.waypoints = pts
@@ -23,6 +26,7 @@ class StealthEntity(Entity):
         self.range = vision_range
         self.half_angle = math.radians(VISION_ANGLE / 2)
         self.facing = pygame.Vector2(1, 0)
+        self.sprite_name = sprite
 
     def update(self, dt, tilemap):
         if len(self.waypoints) < 2:
@@ -37,6 +41,15 @@ class StealthEntity(Entity):
             self.facing = d
             self.pos += d * self.speed * dt
 
+    def lure_toward(self, point, dt):
+        """Move toward a noise source, overriding patrol for this frame."""
+        center = pygame.Vector2(self.rect.center)
+        to = pygame.Vector2(point) - center
+        if to.length() > 2:
+            d = to.normalize()
+            self.facing = d
+            self.pos += d * self.speed * dt
+
     def can_see(self, player, tilemap):
         ec = pygame.Vector2(self.rect.center)
         pc = pygame.Vector2(player.rect.center)
@@ -46,15 +59,12 @@ class StealthEntity(Entity):
             return False
         if dist < 1:
             return True
-        # inside the cone?
         delta = abs(self.facing.angle_to(to))
         delta = min(delta, 360 - delta)
         if math.radians(delta) > self.half_angle:
             return False
-        # hidden if crouched in cover
         if player.crouching and tilemap.in_cover(player.rect):
             return False
-        # clear line of sight?
         steps = max(2, int(dist // 8))
         for s in range(1, steps):
             p = ec + to * (s / steps)
@@ -72,4 +82,10 @@ class StealthEntity(Entity):
         cone = pygame.Surface(surf.get_size(), pygame.SRCALPHA)
         pygame.draw.polygon(cone, COLORS["cone"], pts)
         surf.blit(cone, (0, 0))
-        pygame.draw.rect(surf, COLORS["entity"], cam.apply(self.rect), border_radius=5)
+
+        r = cam.apply(self.rect)
+        img = assets.sprite(self.sprite_name, (40, 40)) if self.sprite_name else None
+        if img is not None:
+            surf.blit(img, img.get_rect(center=r.center))
+        else:
+            pygame.draw.rect(surf, COLORS["entity"], r, border_radius=5)

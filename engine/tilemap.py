@@ -1,15 +1,19 @@
 """Loads a room from a CSV grid and handles drawing + collision geometry.
 
 Tile codes:  0 = floor, 1 = wall, 2 = cover (hide here while crouching).
-Your teammate builds rooms by editing data/rooms/*.csv — no code needed.
+Draws tile sprites (floor.png / wall.png / cover.png in assets/images/) if you
+add them, else flat colours. Rooms are edited in data/rooms/*.csv.
 """
 import csv
 import pygame
 
+from engine import assets
 from settings import TILE, COLORS
 
 
 class TileMap:
+    TILE_SPRITES = {0: "floor.png", 1: "wall.png", 2: "cover.png"}
+
     def __init__(self, path):
         self.grid = []
         with open(path) as f:
@@ -43,11 +47,15 @@ class TileMap:
     def draw(self, surf, cam):
         for y, row in enumerate(self.grid):
             for x, c in enumerate(row):
-                if c == 1:
-                    color = COLORS["wall"]
-                elif c == 2:
-                    color = COLORS["cover"]
-                else:
-                    color = COLORS["floor"]
                 r = pygame.Rect(x * TILE, y * TILE, TILE, TILE)
-                pygame.draw.rect(surf, color, cam.apply(r))
+                img = assets.sprite(self.TILE_SPRITES.get(c), (TILE, TILE))
+                if img is not None:
+                    surf.blit(img, cam.apply(r))
+                else:
+                    if c == 1:
+                        color = COLORS["wall"]
+                    elif c == 2:
+                        color = COLORS["cover"]
+                    else:
+                        color = COLORS["floor"]
+                    pygame.draw.rect(surf, color, cam.apply(r))
