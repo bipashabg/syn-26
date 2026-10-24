@@ -1,10 +1,13 @@
 """Title screen. Enter to begin, Esc to quit."""
 import pygame
+import os
 
 from engine.scene import Scene
 from engine import assets
-from settings import WIDTH, HEIGHT, COLORS
+from settings import ASSET_DIR,WIDTH, HEIGHT, COLORS
 
+TITLE_MUSIC = "2_STAY.ogg"
+MUSIC_START = 65.0
 
 class TitleScene(Scene):
     def handle_event(self, e):
@@ -14,6 +17,22 @@ class TitleScene(Scene):
                 self.game.replace_scene(PrologueScene(self.game))
             elif e.key == pygame.K_ESCAPE:
                 self.game.quit()
+                
+    def on_enter(self):
+        music_path = os.path.join(
+            ASSET_DIR, "audio", TITLE_MUSIC
+        )
+
+        try:
+            pygame.mixer.music.load(music_path)
+            pygame.mixer.music.set_volume(0.35)
+            pygame.mixer.music.play(-1,start=MUSIC_START)
+
+        except pygame.error as e:
+            print("Could not play title music:", e)
+            
+    def on_exit(self):
+        pygame.mixer.music.stop()
 
     def draw(self, surf):
         surf.fill(COLORS["bg"])
