@@ -6,103 +6,103 @@
     "text": "The signal is stabilizing. Just a few more seconds, and we'll have everything."
   },
   {
-    "at": 3.0,
+    "at": 4.0,
     "image": "prologue/s_1.png",
     "speaker": "MIRA",
     "text": "Keep an eye on the gravity shear, Arin. We're getting a lot of data, but let's not push it."
   },
   {
-    "at": 5.0,
+    "at": 8.0,
     "image": "prologue/s_2.png",
     "speaker": "MIRA",
     "text": "Arin, the warning lights are up. The gravity shear is climbing!"
   },
   {
-    "at": 7.0,
+    "at": 11.0,
     "image": "prologue/s_3_1.png",
     "speaker": ".",
     "text": "..."
   },
   {
-    "at": 9.0,
+    "at": 14.0,
     "image": "prologue/s_3_2.png",
     "speaker": "MIRA",
     "text": "The Core is Destabalizing! Arin, we have to abort!"
   },
   {
-    "at": 11.0,
+    "at": 18.0,
     "image": "prologue/s_3_3.png",
     "speaker": "DR. ARIN RAO",
     "text": "No! We need to finish the scan!"
   },
   {
-    "at": 13.0,
+    "at": 22.0,
     "image": "prologue/s_3_4.png",
     "speaker": "MIRA",
     "text": "Arin, get out! I'll try to shut the Core down!"
   },
   {
-    "at": 15.0,
+    "at": 26.0,
     "image": "prologue/s_3_5.png",
     "speaker": ".",
     "text": "..."
   },
   {
-    "at": 17.0,
+    "at": 29.0,
     "image": "prologue/s_4.png",
     "speaker": "SYSTEM",
     "text": "SEVEN YEARS LATER — VESPER RESEARCH FACILITY, COMA WARD."
   },
   {
-    "at": 19.0,
+    "at": 33.0,
     "image": "prologue/s_5.png",
     "speaker": "TECHNICIAN",
     "text": "Seven years in a coma... and his memories are still deteriorating."
   },
   {
-    "at": 21.0,
+    "at": 37.0,
     "image": "prologue/s_5.png",
     "speaker": "DOCTOR",
     "text": "His mind keeps returning to the same event. The Asterion incident."
   },
   {
-    "at": 23.0,
+    "at": 41.0,
     "image": "prologue/s_5.png",
     "speaker": "TECHNICIAN",
     "text": "Doctor... the neural link is ready"
   },
   {
-    "at": 25.0,
+    "at": 44.0,
     "image": "prologue/s_5.png",
     "speaker": "DOCTOR",
     "text": "Then it's time."
   },
   {
-    "at": 27.0,
+    "at": 47.0,
     "image": "prologue/s_6.png",
     "speaker": "DOCTOR",
     "text": "You're going into Dr. Arin Rao's subconscious."
   },
   {
-    "at": 29.0,
+    "at": 51.0,
     "image": "prologue/s_6.png",
     "speaker": "DOCTOR",
     "text": "Find the missing memories. Recover the shutdown sequence."
   },
   {
-    "at": 31.0,
+    "at": 55.0,
     "image": "prologue/s_6.png",
     "speaker": "DOCTOR",
     "text": "And whatever you do... don't trust everything you see in there."
   },
   {
-    "at": 33.0,
+    "at": 59.0,
     "image": "prologue/s_7.png",
     "speaker": "TECHNICIAN",
     "text": "Neural interface connected. Synchronization at forty percent."
   },
   {
-    "at": 34.0,
+    "at": 63.0,
     "image": "prologue/s_7.png",
     "speaker": "SYSTEM",
     "text": "NEURAL LINK ESTABLISHED. ENTERING MEMORY CONSTRUCT."

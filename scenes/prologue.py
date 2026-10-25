@@ -9,9 +9,9 @@ from settings import ASSET_DIR, WIDTH, HEIGHT, COLORS, DATA_DIR
 
 # Prologue music configuration
 PROLOGUE_MUSIC = "1_no_time_for_caution.ogg"
-MUSIC_START = 0.0          # start from the beginning
+MUSIC_START = 153.0          # start from the beginning
 MUSIC_VOLUME = 0.4         # Volume between 0.0 and 1.0
-PROLOGUE_DURATION = 42.0   # Cinematic duration after music starts
+PROLOGUE_DURATION = 66.0   # Cinematic duration after music starts
 
 
 class PrologueScene(Scene):

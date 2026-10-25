@@ -10,3 +10,4 @@ env/
 *:Zone.Identifier
 .venv/
 __pycache__/
+build/
