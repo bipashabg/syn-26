@@ -8,7 +8,7 @@ from gameplay.dialogue import Dialogue
 from settings import ASSET_DIR, WIDTH, HEIGHT, COLORS, DATA_DIR
 
 # Prologue music configuration
-PROLOGUE_MUSIC = "2_STAY.ogg"
+PROLOGUE_MUSIC = "1_no_time_for_caution.ogg"
 MUSIC_START = 0.0          # start from the beginning
 MUSIC_VOLUME = 0.4         # Volume between 0.0 and 1.0
 PROLOGUE_DURATION = 42.0   # Cinematic duration after music starts
