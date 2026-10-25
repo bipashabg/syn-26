@@ -1,0 +1,93 @@
+[
+  {
+    "at": 0.0,
+    "image": "ending/mira_flashback.png",
+    "speaker": "..",
+    "text": "........",
+    "flash": true
+  },
+  {
+    "at": 4.0,
+    "image": "ending/e_1.png",
+    "speaker": "SYSTEM",
+    "text": "NEURAL LINK RELEASED. PATIENT RESPONSE DETECTED."
+  },
+  {
+    "at": 7.0,
+    "image": "ending/e_2.png",
+    "speaker": "DOCTOR",
+    "text": "Arin? Can you hear me? You've been unconscious for seven years."
+  },
+  {
+    "at": 11.0,
+    "image": "ending/e_3.png",
+    "speaker": "ARIN [YOU]",
+    "text": "Mira... I remember now. You stayed behind to shut it down."
+  },
+  {
+    "at": 15.0,
+    "image": "ending/e_2.png",
+    "speaker": "DOCTOR",
+    "text": "Easy, Arin. Your neural activity is still stabilizing. Don't try to get up yet."
+  },
+  {
+    "at": 18.0,
+    "image": "ending/e_2.png",
+    "speaker": "DOCTOR",
+    "text": "You have been given a second chance, Arin. But your body needs time to recover."
+  },
+  {
+    "at": 22.0,
+    "image": "ending/e_3.png",
+    "speaker": "ARIN [YOU]",
+    "text": "I can't just lie here. The signal is coming back. I know how to stop it."
+    },
+  {
+    "at": 26.0,
+    "image": "ending/e_4.png",
+    "speaker": "SYSTEM",
+    "text": "VESPER RESEARCH FACILITY: CORE INSTABILITY CRITICAL. AUTOMATIC RESTART DETECTED."
+  },
+  {
+    "at": 30.0,
+    "image": "ending/e_4.png",
+    "speaker": "TECHNICIAN",
+    "text": "The recovery team is ready. We'll guide you through the shutdown remotely."
+  },
+  {
+    "at": 34.0,
+    "image": "ending/e_5.png",
+    "speaker": "TECHNICIAN",
+    "text": "The resonator is rebuilding the signal. We need the shutdown procedure now!"
+  },
+  {
+    "at": 38.0,
+    "image": "ending/e_5.png",
+    "speaker": "ARIN [YOU]",
+    "text": "I know what to do. Disable the signal resonator. Vent the stored energy. Isolate the core."
+  },
+  {
+    "at": 43.0,
+    "image": "ending/e_5.png",
+    "speaker": "SYSTEM",
+    "text": "SIGNAL RESONATOR DISABLED. STORED ENERGY VENTING."
+  },
+  {
+    "at": 46.0,
+    "image": "ending/e_5.png",
+    "speaker": "SYSTEM",
+    "text": "CORE ISOLATED. AUTOMATIC RESTART CANCELLED."
+  },
+  {
+    "at": 50.0,
+    "image": "ending/e_5.png",
+    "speaker": "TECHNICIAN",
+    "text": "The readings are stable. The signal has stopped. We did it."
+  },
+  {
+    "at": 54.0,
+    "image": "ending/mira_flashback.png",
+    "speaker": "MIRA",
+    "text": "You can come back now, Arin."
+  }
+]

@@ -170,6 +170,9 @@ class Dialogue(Scene):
 
         if image_path:
             self._draw_cinematic_background(surf, image_path)
+            
+            if line.get("flash", False): return
+            
             box = pygame.Rect(24, HEIGHT - 132, WIDTH - 48, 108)
             panel = pygame.Surface(box.size, pygame.SRCALPHA)
             panel.fill((10, 12, 18, 224))
