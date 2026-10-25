@@ -149,7 +149,7 @@ engine, engine depends only on settings. The engine never imports upward.
 ### Directory layout
 
 ```
-mindtrace/
+project-dir/
 ├── main.py                 Entry point: builds the Game and pushes the title scene
 ├── settings.py             Constants and theme (screen size, tile size, colors, tuning)
 ├── requirements.txt

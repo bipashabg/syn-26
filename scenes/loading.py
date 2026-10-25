@@ -14,8 +14,8 @@ class LoadingScene(Scene):
         duration=3.0,
         on_done=None,
         background_path=None,
-        title="MINDTRACE",
-        subtitle="ESTABLISHING NEURAL CONNECTION",
+        title="Project Gargantua",
+        subtitle="Establishing neural connection...",
     ):
         super().__init__(game)
 

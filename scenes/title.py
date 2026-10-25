@@ -75,7 +75,7 @@ class TitleScene(Scene):
 
         # Main game title.
         title = assets.font(56).render(
-            "Welcome to MINDTRACE", True, COLORS["accent"]
+            "Welcome to Project Gargantua", True, COLORS["accent"]
         )
         surf.blit(
             title,
