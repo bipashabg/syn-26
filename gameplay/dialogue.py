@@ -1,3 +1,4 @@
+
 import json
 import pygame
 
@@ -6,7 +7,7 @@ from engine import assets, audio
 from settings import WIDTH, HEIGHT
 
 UI_FONT = "pixel.ttf"
-CHARS_PER_SEC = 45         
+CHARS_PER_SEC = 45          # typewriter speed
 TYPE_SOUND = "type.wav"
 
 PANEL  = (13, 16, 34)
@@ -37,7 +38,7 @@ class Dialogue(Scene):
 
         # typewriter state (normal mode)
         self.shown = 0.0
-        self._played = 0
+        self._type_chan = None     # looping type-sound channel while typing
 
         # timing / lifecycle state
         self.elapsed = 0.0
@@ -56,8 +57,8 @@ class Dialogue(Scene):
                    music_start=music_start, music_volume=music_volume,
                    fallback_duration=fallback_duration)
 
+    # ---------- lifecycle ----------
     def on_enter(self):
-        # Only timed cinematics drive their own soundtrack.
         if not self.timed or not self.music_path:
             return
         try:
@@ -70,12 +71,21 @@ class Dialogue(Scene):
             self.music_active = False
 
     def on_exit(self):
+        self._stop_type()
         if self.music_active:
             try:
                 pygame.mixer.music.stop()
             except pygame.error:
                 pass
             self.music_active = False
+
+    def _stop_type(self):
+        if self._type_chan:
+            try:
+                self._type_chan.stop()
+            except Exception:
+                pass
+        self._type_chan = None
 
     def _finish(self):
         if self.finished:
@@ -90,6 +100,7 @@ class Dialogue(Scene):
             return self.lines[self.idx].get("text", "")
         return ""
 
+    # ---------- update ----------
     def update(self, dt):
         if self.timed:
             self._update_timed(dt)
@@ -99,13 +110,12 @@ class Dialogue(Scene):
     def _update_typewriter(self, dt):
         text = self._text()
         if self.shown < len(text):
+            if self._type_chan is None:                 # start the loop while typing
+                snd = audio.sound(TYPE_SOUND)
+                self._type_chan = snd.play(loops=-1) if snd else False
             self.shown = min(len(text), self.shown + CHARS_PER_SEC * dt)
-            n = int(self.shown)
-            if n > self._played:
-                ch = text[n - 1] if 0 < n <= len(text) else " "
-                if ch != " " and n % 2 == 0:
-                    audio.play(TYPE_SOUND, 0.5)
-                self._played = n
+            if self.shown >= len(text):                 # line fully shown -> silence
+                self._stop_type()
 
     def _update_timed(self, dt):
         if self.finished:
@@ -117,7 +127,6 @@ class Dialogue(Scene):
         else:
             self.timeline_time = self.elapsed
 
-        # pick the latest cue whose time has arrived
         for i, line in enumerate(self.lines):
             if float(line.get("at", 0.0)) <= self.timeline_time:
                 self.idx = i
@@ -130,6 +139,7 @@ class Dialogue(Scene):
         if self.music_active and self.elapsed > 0.5 and not pygame.mixer.music.get_busy():
             self._finish()
 
+    # ---------- input ----------
     def handle_event(self, e):
         if e.type != pygame.KEYDOWN:
             return
@@ -140,14 +150,16 @@ class Dialogue(Scene):
         if e.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_e):
             text = self._text()
             if self.shown < len(text):
-                self.shown = len(text)          # first press: reveal the rest
+                self.shown = len(text)          # reveal the rest
+                self._stop_type()
             else:
-                self.idx += 1                   # next press: advance
+                self.idx += 1                   # advance
                 self.shown = 0.0
-                self._played = 0
+                self._stop_type()
                 if self.idx >= len(self.lines):
                     self._finish()
 
+    # ---------- draw ----------
     def draw(self, surf):
         if self.idx >= len(self.lines):
             return

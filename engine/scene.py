@@ -1,4 +1,5 @@
 
+
 class Scene:
     transparent = False
     update_below = False
@@ -35,8 +36,6 @@ class SceneManager:
             self.stack.pop().on_exit()
 
     def replace(self, scene):
-        from engine import audio
-        audio.play("transition.wav")
         self.pop()
         self.push(scene)
 

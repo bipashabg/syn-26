@@ -38,6 +38,7 @@ class StageScene(Scene):
         self.detection = 0.0
         self._near = None
         self._seen_last = False
+        self._alarm_chan = None
         self._reconstructed = False
         self._intro_shown = False
 
@@ -51,6 +52,9 @@ class StageScene(Scene):
 
     def on_exit(self):
         audio.music_stop()
+        if self._alarm_chan:
+            self._alarm_chan.stop()
+            self._alarm_chan = None
 
     def handle_event(self, e):
         if (e.type == pygame.KEYDOWN and e.key == pygame.K_e
@@ -100,6 +104,9 @@ class StageScene(Scene):
     def _caught(self):
         self.detection = 0.0
         self.player.pos.update(*self.spawn)
+        if self._alarm_chan:
+            self._alarm_chan.stop()
+            self._alarm_chan = None
 
     def _update_near(self):
         self._near = None
@@ -139,7 +146,11 @@ class StageScene(Scene):
 
         seen = any(en.can_see(self.player, self.map) for en in self.entities)
         if seen and not self._seen_last:
-            audio.play("alarm.wav", 0.6)      # alarm on first entering a cone
+            snd = audio.sound("alarm.wav")
+            self._alarm_chan = snd.play(loops=-1) if snd else None   # ring while seen
+        elif self._seen_last and not seen and self._alarm_chan:
+            self._alarm_chan.stop()                                  # stop when safe
+            self._alarm_chan = None
         self._seen_last = seen
         self.detection += (DETECT_RATE if seen else -DETECT_DECAY) * dt
         if investigating:

@@ -1,3 +1,4 @@
+"""Loading and story transition screens."""
 
 import pygame
 
@@ -46,7 +47,7 @@ class LoadingScene(Scene):
 
     def on_enter(self):
         snd = audio.sound("transition.wav")
-        self._chan = snd.play() if snd else None
+        self._chan = snd.play(loops=-1) if snd else None   # loop while loading
 
     def on_exit(self):
         if self._chan:
