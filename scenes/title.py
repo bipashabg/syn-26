@@ -1,13 +1,18 @@
-"""Title screen. Enter to begin, Esc to quit."""
 import pygame
 import os
 
 from engine.scene import Scene
-from engine import assets
+from engine import assets, audio
 from settings import ASSET_DIR,WIDTH, HEIGHT, COLORS
 
 TITLE_MUSIC = "2_STAY.ogg"
 MUSIC_START = 65.0
+
+def on_enter(self):
+    audio.music_play("2_STAY.ogg")      
+
+def on_exit(self):
+    audio.music_stop()
 
 class TitleScene(Scene):
     def __init__(self, game):

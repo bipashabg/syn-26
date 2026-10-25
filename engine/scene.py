@@ -1,12 +1,3 @@
-"""Scene base class + a stack-based SceneManager.
-
-The stack is the backbone of UNTITLED: the ship/mind rooms are scenes, and
-dialogue, cutscenes and the reconstruction puzzle are *transparent* scenes
-pushed on top that pause what's below. Set `transparent = True` to let the
-scene beneath keep drawing (overlays); set `update_below = True` only if the
-scene beneath should keep updating too (rarely needed).
-"""
-
 
 class Scene:
     transparent = False
@@ -44,6 +35,8 @@ class SceneManager:
             self.stack.pop().on_exit()
 
     def replace(self, scene):
+        from engine import audio
+        audio.play("transition.wav")
         self.pop()
         self.push(scene)
 

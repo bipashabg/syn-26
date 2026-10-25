@@ -4,6 +4,7 @@ import pygame
 from engine.scene import Scene
 from engine.camera import Camera
 from engine.tilemap import TileMap
+from engine import audio
 from gameplay.player import Player
 from gameplay.enemy import StealthEntity
 from gameplay.dialogue import Dialogue
@@ -36,14 +37,20 @@ class StageScene(Scene):
         self.clock = DilationClock(config.get("time", 600))
         self.detection = 0.0
         self._near = None
+        self._seen_last = False
         self._reconstructed = False
         self._intro_shown = False
 
     def on_enter(self):
+        if self.cfg.get("music"):
+            audio.music_play(self.cfg["music"])
         if self.cfg.get("intro") and not self._intro_shown:
             self._intro_shown = True
             path = os.path.join(DATA_DIR, "dialogue", self.cfg["intro"])
             self.game.push_scene(Dialogue.from_file(self.game, path))
+
+    def on_exit(self):
+        audio.music_stop()
 
     def handle_event(self, e):
         if (e.type == pygame.KEYDOWN and e.key == pygame.K_e
@@ -131,6 +138,9 @@ class StageScene(Scene):
                     it.progress = max(0.0, it.progress - 0.05 * dt)
 
         seen = any(en.can_see(self.player, self.map) for en in self.entities)
+        if seen and not self._seen_last:
+            audio.play("alarm.wav", 0.6)      # alarm on first entering a cone
+        self._seen_last = seen
         self.detection += (DETECT_RATE if seen else -DETECT_DECAY) * dt
         if investigating:
             self.detection += 0.15 * dt   # investigating is noisy

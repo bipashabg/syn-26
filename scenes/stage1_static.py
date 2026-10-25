@@ -56,5 +56,6 @@ def make(game):
         "interactables": interactables,
         "intro": "stage1.json",
         "next": go_next,
+        "music": "stage1_music.wav",
     }
     game.replace_scene(StageScene(game, cfg))

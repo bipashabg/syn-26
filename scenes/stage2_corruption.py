@@ -99,5 +99,6 @@ def make(game):
         },
 
         "enemy_sprite": "stage2/tidal_watcher.png",
+        "music": "stage2_music.wav",
     }
     game.replace_scene(StageScene(game, cfg))

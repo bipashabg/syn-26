@@ -1,8 +1,11 @@
-
+"""Ending — "Back to Reality." Pixel/cyber styled, over an animated space
+backdrop (GIF if present, else a procedural starfield). Matches the finalized
+story: the shutdown works, and Mira's last words close the neural link.
+"""
 import pygame
 
 from engine.scene import Scene
-from engine import assets
+from engine import assets, audio
 from engine.anim import SpaceBackdrop
 from settings import WIDTH, HEIGHT
 
@@ -28,6 +31,12 @@ class EndingScene(Scene):
         self.bg = SpaceBackdrop("space.gif")
         self.t = 0.0
 
+    def on_enter(self):
+        audio.music_play("lastscreen.wav")
+
+    def on_exit(self):
+        audio.music_stop()
+
     def handle_event(self, e):
         if e.type == pygame.KEYDOWN:
             if e.key in (pygame.K_RETURN, pygame.K_SPACE):
@@ -37,20 +46,23 @@ class EndingScene(Scene):
                 self.game.quit()
 
     def update(self, dt):
+        prev = int(self.t / 0.9)
         self.t += dt
         self.bg.update(dt)
+        if int(self.t / 0.9) > prev:
+            audio.play("type.wav", 0.4)
 
     def draw(self, surf):
         self.bg.draw(surf)
         veil = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-        veil.fill((6, 8, 16, 150))          
+        veil.fill((6, 8, 16, 150))          # darken so text stays readable
         surf.blit(veil, (0, 0))
 
         cx = WIDTH // 2
         title = assets.font(28, UI_FONT).render("BACK TO REALITY", True, CYAN)
         surf.blit(title, (cx - title.get_width() // 2, 90))
 
-        reveal = int(self.t / 0.9)        
+        reveal = int(self.t / 0.9)          # lines fade in one at a time
         y = 190
         for i, ln in enumerate(LINES):
             if i > reveal:

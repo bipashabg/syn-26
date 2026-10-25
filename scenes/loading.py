@@ -1,9 +1,8 @@
-"""Loading and story transition screens."""
 
 import pygame
 
 from engine.scene import Scene
-from engine import assets
+from engine import assets, audio
 from settings import WIDTH, HEIGHT, COLORS
 
 
@@ -27,6 +26,7 @@ class LoadingScene(Scene):
         self.title = title
         self.subtitle = subtitle
         self.background = None
+        self._chan = None
 
         # Load the optional transition image.
         if background_path:
@@ -43,6 +43,17 @@ class LoadingScene(Scene):
             (WIDTH, HEIGHT), pygame.SRCALPHA
         )
         self.overlay.fill((0, 0, 0, 115))
+
+    def on_enter(self):
+        snd = audio.sound("transition.wav")
+        self._chan = snd.play() if snd else None
+
+    def on_exit(self):
+        if self._chan:
+            try:
+                self._chan.stop()
+            except Exception:
+                pass
 
     def update(self, dt):
         if self.finished:

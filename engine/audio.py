@@ -1,17 +1,10 @@
-"""Tiny audio helper. Everything is wrapped in try/except and lazy-inits the
-mixer, so a missing file or a machine with no audio device never crashes the
-game — it just stays quiet.
-
-Put sound effects and music in assets/audio/. Sound effects: .wav or .ogg.
-Music (streamed, looped): .ogg preferred (.mp3/.wav also work).
-"""
 import os
 import pygame
 
 from settings import ASSET_DIR
 
 _sounds = {}
-_ready = None   # None = not tried yet, True/False = result
+_ready = None
 
 
 def _ensure():
@@ -71,6 +64,6 @@ def music_stop(fade_ms=400):
     if not _ensure():
         return
     try:
-        pygame.mixer.music.fadeout(fade_ms)
+        pygame.mixer.music.stop()
     except Exception:
         pass

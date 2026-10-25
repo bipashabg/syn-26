@@ -87,6 +87,6 @@ def make(game):
         ],
         "interactables": [console],
         "intro": "stage3.json",
-        "music": "stage3_music.ogg",
+        "music": "stage3_music.wav",
     }
     game.replace_scene(CoreMemoryStage(game, cfg))
