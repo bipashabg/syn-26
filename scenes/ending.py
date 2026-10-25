@@ -256,7 +256,7 @@ class EndingScene(Scene):
                 surf, "ending/the_end.png", darkness=125
             )
             self._center_text(
-                surf, "MINDTRACE: THE LAST RECALL",
+                surf, "PROJECT GARGANTUA",
                 22, 260, COLORS["text"]
             )
             self._center_text(
