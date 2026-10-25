@@ -1,9 +1,3 @@
-"""Stage 2 — "Corruption." Tighter space, two patrols. Reveal: Arin overrode
-the safety protocol on purpose — and it was about Lena Voss.
-
-Loads its reconstruction content from data/anomalies.json to show the
-data-driven path (your teammate can edit the text without touching code).
-"""
 import os
 import json
 
@@ -46,7 +40,7 @@ def make(game):
             [
                 {
                     "speaker": "ARCHIVE LOG 07",
-                    "text": "Override requires two keys. Only one was turned. Mine."
+                    "text": "SAFETY INTERLOCK BYPASSED BY DR. ARIN RAO. MIRA SEN INITIATED EMERGENCY SHUTDOWN; THE SEQUENCE WAS INTERRUPTED BEFORE CORE ISOLATION."
                 }
             ],
             sprite="stage2/tidal_log.png",
@@ -82,6 +76,7 @@ def make(game):
         "room": "stage2.csv",
         "spawn": (96, 96),
         "objective": "Find all three fragments. Two Watchers now.",
+        "intro": "stage2.json",
         "time": 540,
         "entity_speed": 85,
         "patrols": [

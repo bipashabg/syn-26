@@ -8,23 +8,31 @@
     ],
     "correct": [0, 1, 2, 3],
     "true_memory": [
-      {
-        "speaker": "MEMORY",
-        "text": "Mira begged you to abort. You overrode the safety lockout to finish the scan."
-      },
-      {
-        "speaker": "VOICE",
-        "text": "The field collapsed before the emergency shutdown could complete."
-      }
-    ],
+        {
+          "speaker": "RECOVERED MEMORY",
+          "text": "Mira told me to abort. I overrode the lockout because I wanted to finish the scan."
+        },
+        {
+          "speaker": "VOICE",
+          "text": "The Core destabilized. The emergency shutdown was interrupted before the Core could be isolated."
+        },
+        {
+          "speaker": "ARIN [YOU]",
+          "text": "I got out... but Mira stayed behind. I can't remember what happened to her."
+        },
+        {
+          "speaker": "VOICE",
+          "text": "The final recording is in the Core chamber. Recover the full shutdown procedure."
+        }
+      ],
     "false_memory": [
       {
-        "speaker": "MEMORY",
-        "text": "The lockout failed on its own. There was nothing you could have done."
+        "speaker": "FALSE MEMORY",
+        "text": "The safety lockout failed on its own. Arin had no choice."
       },
       {
         "speaker": "VOICE",
-        "text": "No. You remember making the choice. Order the fragments again."
+        "text": "That's the false version. The records show that the override was deliberate. Reorder the events."
       }
     ]
   }

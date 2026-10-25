@@ -1,9 +1,17 @@
 {
-  "_comment": "Stage order + metadata reference. The scene wiring lives in scenes/*.py; this file is a human-readable map of the flow and a place to tune high-level values. Not loaded by the engine yet — wire it up if you want fully data-driven stage loading.",
-  "flow": ["title", "prologue", "stage1_static", "stage2_corruption", "stage3_horizon", "ending"],
-  "stages": {
-    "stage1_static": {"title": "Static", "room": "stage1.csv", "reveal": "A second figure, scratched out"},
-    "stage2_corruption": {"title": "Corruption", "room": "stage2.csv", "reveal": "Arin overrode safety on purpose, for Lena"},
-    "stage3_horizon": {"title": "Event Horizon", "room": "stage3.csv", "reveal": "MNEME is Lena; shutting down erases her"}
-  }
+  "stage1_static": {
+  "title": "The Forgotten Station",
+  "room": "stage1.csv",
+  "reveal": "Arin's memory records a deliberate safety override"
+},
+"stage2_corruption": {
+  "title": "The Tidal Archive",
+  "room": "stage2.csv",
+  "reveal": "Arin overrode the lockout; Mira tried to initiate shutdown"
+},
+"stage3_horizon": {
+  "title": "The Core Memory",
+  "room": "stage3.csv",
+  "reveal": "The guiding voice is Arin's buried memory of Mira; the shutdown procedure is recovered"
+}
 }

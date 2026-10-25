@@ -22,12 +22,24 @@ SHUTDOWN = {
     ],
     "correct": [0, 1, 2],
     "true_memory": [
-        {"speaker": "SYSTEM", "text": "Shutdown sequence accepted. Resonance collapsing."},
-        {"speaker": "MIRA", "text": "That's it, Arin. You remembered. You can come back now."},
+        {
+            "speaker": "SYSTEM",
+            "text": "SHUTDOWN PROCEDURE RECONSTRUCTED. AWAITING TRANSMISSION."
+        },
+        {
+            "speaker": "VOICE",
+            "text": "You recovered the sequence. Now there's one memory left, Arin."
+        }
     ],
     "false_memory": [
-        {"speaker": "SYSTEM", "text": "Sequence rejected. Instability rising."},
-        {"speaker": "MIRA", "text": "No — think. Resonator, then energy, then core. In that order."},
+        {
+            "speaker": "SYSTEM",
+            "text": "SEQUENCE REJECTED. RECONSTRUCTION INCOMPLETE."
+        },
+        {
+            "speaker": "VOICE",
+            "text": "Resonator first. Then vent the stored energy. Finally isolate the Core. Try again."
+        }
     ],
 }
 
@@ -63,8 +75,15 @@ class CoreMemoryStage(StageScene):
         ))
 
     def _to_ending(self):
-        from scenes.ending import EndingScene
-        self.game.replace_scene(EndingScene(self.game))
+        lines = _dialogue("climax.json")
+
+        def show_choice():
+            from scenes.ending import EndingScene
+            self.game.replace_scene(EndingScene(self.game))
+
+        self.game.push_scene(
+            Dialogue(self.game, lines, on_done=show_choice)
+        )
 
 
 def make(game):

@@ -40,7 +40,7 @@
     "at": 22.0,
     "image": "ending/e_3.png",
     "speaker": "ARIN [YOU]",
-    "text": "I can't just lie here. The signal is coming back. I know how to stop it."
+    "text": "The Core... its signal is returning. I remember the shutdown sequence. Connect me to the recovery team."
     },
   {
     "at": 26.0,
@@ -52,7 +52,7 @@
     "at": 30.0,
     "image": "ending/e_4.png",
     "speaker": "TECHNICIAN",
-    "text": "The recovery team is ready. We'll guide you through the shutdown remotely."
+    "text": "We have remote access to the Core. Tell us the steps; we'll execute them from here."
   },
   {
     "at": 34.0,
@@ -87,7 +87,7 @@
   {
     "at": 54.0,
     "image": "ending/mira_flashback.png",
-    "speaker": "MIRA",
+    "speaker": "MIRA [MEMORY]",
     "text": "You can come back now, Arin."
   }
 ]

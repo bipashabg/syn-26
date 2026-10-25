@@ -1,8 +1,26 @@
 [
-  {"speaker": "TERMINAL", "text": "SAFETY OVERRIDE: ACCEPTED"},
-  {"speaker": "TERMINAL", "text": "OPERATOR: ARIN RAO"},
-  {"speaker": "TERMINAL", "text": "FINAL LOG: CORRUPTED"},
-  {"speaker": "ARIN [YOU]", "text": "I overrode the safety lockout myself. But why? I only wanted to finish the scan."},
-  {"speaker": "VOICE", "text": "Don't trust the first thing you remember. There is more to this."},
-  {"speaker": "VOICE", "text": "The terminal just unlocked the Tidal Archive. Go."}
+  {
+    "speaker": "TERMINAL",
+    "text": "SAFETY OVERRIDE: ACCEPTED"
+  },
+  {
+    "speaker": "TERMINAL",
+    "text": "OPERATOR: ARIN RAO"
+  },
+  {
+    "speaker": "TERMINAL",
+    "text": "FINAL LOG: CORRUPTED"
+  },
+  {
+    "speaker": "ARIN [YOU]",
+    "text": "I overrode the lockout. I knew why it was there... I told myself I only needed a few more seconds."
+  },
+  {
+    "speaker": "VOICE",
+    "text": "This log proves what you did, not what happened afterward. The rest is buried in the Tidal Archive."
+  },
+  {
+    "speaker": "VOICE",
+    "text": "The terminal has unlocked the Tidal Archive. Move."
+  }
 ]

@@ -1,4 +1,14 @@
 [
-  {"speaker": "VOICE", "text": "This is the core — the memory of the moment it all went wrong. It's guarded, and this deep, the Tide runs strong."},
-  {"speaker": "VOICE", "text": "Time your moves around both of them. Reach the console, play what's on it, and we finish this."}
+  {
+    "speaker": "VOICE",
+    "text": "This is the Core chamber—the last intact memory of the Asterion incident."
+  },
+  {
+    "speaker": "ARIN [YOU]",
+    "text": "The final recording. It must contain the missing shutdown procedure."
+  },
+  {
+    "speaker": "VOICE",
+    "text": "The Guardian and Memory Tide protect the console. Reach it and hold E to play the recording. This is the memory that matters most."
+  }
 ]

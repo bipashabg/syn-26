@@ -1,10 +1,30 @@
 [
-  {"speaker": "RECORDING", "text": "Playback — final log, Experiment 7."},
-  {"speaker": "ARIN [YOU]", "text": "The signal is stabilizing. Just a few more seconds."},
-  {"speaker": "COMPUTER", "text": "Safety threshold exceeded. Shutdown recommended."},
-  {"speaker": "ARIN [YOU]", "text": "Override accepted. Hold together, just hold together..."},
-  {"speaker": "MIRA", "text": "Arin, abort! I'll get you out of here!"},
-  {"speaker": "ARIN [YOU]", "text": "...that voice. It's been you the whole way through."},
-  {"speaker": "MIRA", "text": "Mira Sen. Chief engineer. I stayed behind to run the shutdown while you ran. I didn't make it out."},
-  {"speaker": "MIRA", "text": "What's guided you isn't me reaching you from somewhere. It's your own memory of me — the truth you buried. Finish it. Enter the sequence."}
+  {
+    "speaker": "RECORDING",
+    "text": "Playback — final log, Experiment 7."
+  },
+  {
+    "speaker": "DR. ARIN RAO — RECORDING",
+    "text": "The black-hole signal is stabilizing. Just a few more seconds."
+  },
+  {
+    "speaker": "COMPUTER",
+    "text": "Safety threshold exceeded. Emergency shutdown recommended."
+  },
+  {
+    "speaker": "DR. ARIN RAO — RECORDING",
+    "text": "Override accepted. Keep the scan running..."
+  },
+  {
+    "speaker": "DISTORTED VOICE — RECORDING",
+    "text": "Arin, abort! I'll trigger the shutdown! Get out!"
+  },
+  {
+    "speaker": "COMPUTER",
+    "text": "CRITICAL INSTABILITY. EMERGENCY SHUTDOWN INTERRUPTED. FINAL LOG CORRUPTED."
+  },
+  {
+    "speaker": "ARIN [YOU]",
+    "text": "That voice... the same one that's been guiding me. Why does it feel so familiar?"
+  }
 ]

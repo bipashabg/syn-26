@@ -1,34 +1,52 @@
 [
   {
-    "speaker": "ARIN",
-    "text": "I remember now. I ignored the warning."
+    "speaker": "VOICE",
+    "text": "You recovered the sequence. There's one memory left, Arin.",
+    "image": "ending/e_3.png"
   },
   {
-    "speaker": "MIRA",
-    "text": "Arin! Abort! I'll get you out of here!"
+    "speaker": "ARIN [YOU]",
+    "text": "That voice... Mira? You've been guiding me?",
+    "image": "ending/e_3.png"
   },
   {
-    "speaker": "ARIN",
-    "text": "The voice... Mira? You've been guiding me all this time?"
+    "speaker": "MIRA [MEMORY]",
+    "text": "I'm not really here, Arin. I'm the memory of Mira that you buried.",
+    "image": "ending/mira_flashback.png"
   },
   {
-    "speaker": "MIRA",
-    "text": "I'm the memory you buried. You couldn't face what happened when the Core collapsed."
+    "speaker": "ARIN [YOU]",
+    "text": "You stayed behind to shut the Core down. I left you there.",
+    "image": "ending/e_3.png"
   },
   {
-    "speaker": "ARIN",
-    "text": "You stayed behind to save me."
+    "speaker": "MIRA [MEMORY]",
+    "text": "I stayed to trigger the shutdown. It was interrupted before the Core could be isolated. I never made it out.",
+    "image": "ending/mira_flashback.png"
   },
   {
-    "speaker": "MIRA",
-    "text": "You remember now. Finish what we couldn't."
+    "speaker": "ARIN [YOU]",
+    "text": "Even after I survived, my mind buried the truth.",
+    "image": "ending/e_3.png"
+  },
+  {
+    "speaker": "MIRA [MEMORY]",
+    "text": "Then finish what we couldn't.",
+    "image": "ending/mira_flashback.png"
   },
   {
     "speaker": "SYSTEM",
-    "text": "SHUTDOWN SEQUENCE RECOVERED"
+    "text": "VESPER ALERT: CORE CONTAINMENT FAILING. AUTOMATIC RESTART IMMINENT.",
+    "image": "ending/e_4.png"
   },
   {
-    "speaker": "SYSTEM",
-    "text": "1. Disable the signal resonator. 2. Vent the stored energy. 3. Isolate the core."
+    "speaker": "ARIN [YOU]",
+    "text": "The shutdown procedure is recovered. I can transmit it to the team.",
+    "image": "ending/e_5.png"
+  },
+  {
+    "speaker": "MIRA [MEMORY]",
+    "text": "Then let the truth leave this place with you.",
+    "image": "ending/mira_flashback.png"
   }
 ]
