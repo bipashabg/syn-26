@@ -7,6 +7,10 @@ recover a lost emergency shutdown procedure before a catastrophe reactivates.
 Built for a hackathon. Genre influences: Metal Gear Solid (stealth and vision
 cones), Pokemon-style top-down exploration, and the tone of Interstellar and
 Inception (black holes, time dilation, descending through layers of the mind).
+<img width="966" height="635" alt="Screenshot 2026-10-25 054405" src="https://github.com/user-attachments/assets/9883c0de-5510-4119-b7a3-2a5114e7b5e4" />
+
+<img width="967" height="631" alt="Screenshot 2026-10-25 054420" src="https://github.com/user-attachments/assets/b54f1614-0649-40d9-9b9c-4baa3ec232d0" />
+
 
 ---
 
