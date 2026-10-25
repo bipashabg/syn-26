@@ -1,4 +1,4 @@
-# NAME
+# Project Gargantua
 
 A 2D top-down stealth and narrative-mystery game built in Python with pygame.
 The player descends into the fractured memories of a comatose scientist to
